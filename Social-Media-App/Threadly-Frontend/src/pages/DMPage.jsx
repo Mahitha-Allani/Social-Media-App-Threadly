@@ -15,7 +15,6 @@ function formatTime(ts) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// ── Conversation list panel
 function ConvoList({ convos, activeId, onSelect, getUser, currentUserId, unreadCount }) {
   return (
     <div className="w-full md:w-75 lg:w-85 shrink-0 border-r border-cream-border flex flex-col h-full">
@@ -66,8 +65,8 @@ function ConvoList({ convos, activeId, onSelect, getUser, currentUserId, unreadC
   )
 }
 
-// ── Chat window
-function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
+// ── Chat window — receives navigate for post + profile clicks
+function ChatWindow({ convo, currentUser, getUser, onSend, onBack, navigate }) {
   const [txt, setTxt] = useState('')
   const bottomRef = useRef()
   const other = getUser(convo.with)
@@ -86,17 +85,22 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      {/* Header */}
+      {/* Header — clicking name/avatar goes to their profile */}
       <div className="px-4 py-3 border-b border-cream-border flex items-center gap-3 bg-cream shrink-0">
         <button onClick={onBack}
           className="md:hidden text-ink-muted hover:text-ink border-0 bg-transparent cursor-pointer text-lg mr-1">←</button>
-        <Avatar user={other} size="sm" />
-        <div>
-          <div className="flex items-center gap-1">
-            <span className="font-bold text-[15px] text-ink">{other?.name}</span>
-            {other?.verified && <VerifiedBadge size={13} />}
+        <div
+          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => other?.username && navigate(`/profile/${other.username}`)}
+        >
+          <Avatar user={other} size="sm" />
+          <div>
+            <div className="flex items-center gap-1">
+              <span className="font-bold text-[15px] text-ink">{other?.name}</span>
+              {other?.verified && <VerifiedBadge size={13} />}
+            </div>
+            <span className="text-xs text-ink-muted">@{other?.username}</span>
           </div>
-          <span className="text-xs text-ink-muted">@{other?.username}</span>
         </div>
       </div>
 
@@ -118,8 +122,15 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
                 <div className="text-center text-xs text-ink-muted my-1">{formatTime(m.ts)}</div>
               )}
               <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-2`}>
-                {!isMe && <Avatar user={other} size="xs" />}
-                
+                {!isMe && (
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity shrink-0"
+                    onClick={() => other?.username && navigate(`/profile/${other.username}`)}
+                  >
+                    <Avatar user={other} size="xs" />
+                  </div>
+                )}
+
                 {isMe && (
                   <span className="text-[10px] text-ink-muted mb-0.5">{m.read ? '✓✓' : '✓'}</span>
                 )}
@@ -170,26 +181,32 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
                           <span style={{ fontSize: 11, color: '#6B7280' }}>Following</span>
                         </div>
                       </div>
-                      <a href={`/profile/${m.sharedProfile.username}`}
+                      {/* View Profile button uses navigate */}
+                      <button
+                        onClick={() => navigate(`/profile/${m.sharedProfile.username}`)}
                         style={{ marginTop: '8px', padding: '6px 16px', background: '#F3F4F6', color: '#111827',
-                          borderRadius: '999px', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                          borderRadius: '999px', fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer' }}>
                         View Profile
-                      </a>
+                      </button>
                     </div>
-                    {/* Footer */}
                     <div style={{ background: isMe ? '#F97316' : '#F9FAFB', padding: '8px 14px' }}>
                       <span style={{ fontSize: 11, fontWeight: 600, color: isMe ? '#fff' : '#6B7280' }}>
                         Shared a profile
                       </span>
                     </div>
                   </div>
-               ) : m.sharedPost ? (
-  <div className={`max-w-[75%] sm:max-w-[65%] rounded-2xl overflow-hidden ${isMe ? 'rounded-br-sm' : 'rounded-bl-sm'}`}
-    style={{ border: '1px solid #E5E7EB', cursor: 'pointer' }}
-    onClick={() => navigate(`/post/${m.sharedPost._id || m.sharedPost.id}`)}>
-                    {/* Post card */}
+
+                ) : m.sharedPost ? (
+                  /* Shared post card — click navigates to post */
+                  <div
+                    className={`max-w-[75%] sm:max-w-[65%] rounded-2xl overflow-hidden ${isMe ? 'rounded-br-sm' : 'rounded-bl-sm'}`}
+                    style={{ border: '1px solid #E5E7EB', cursor: 'pointer' }}
+                    onClick={() => {
+                      const postId = m.sharedPost._id || m.sharedPost.id || m.postId
+                      if (postId) navigate(`/post/${postId}`)
+                    }}
+                  >
                     <div style={{ background: '#fff', padding: '12px 14px' }}>
-                      {/* Post author */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                         {m.sharedPost.author?.profileImage ? (
                           <img src={m.sharedPost.author.profileImage} alt=""
@@ -210,7 +227,6 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
                           </span>
                         </div>
                       </div>
-                      {/* Post content */}
                       {m.sharedPost.content && (
                         <p style={{ fontSize: 13, color: '#374151', margin: 0, lineHeight: 1.5,
                           display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -218,20 +234,21 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
                         </p>
                       )}
                     </div>
-                    {/* Post image */}
                     {m.sharedPost.image && (
                       <img src={m.sharedPost.image} alt="Post"
                         style={{ width: '100%', maxHeight: 200, objectFit: 'cover', display: 'block' }} />
                     )}
-                    {/* Footer */}
-                    <div style={{ background: isMe ? '#F97316' : '#F9FAFB', padding: '8px 14px' }}>
+                    <div style={{ background: isMe ? '#F97316' : '#F9FAFB', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: 11, fontWeight: 600, color: isMe ? '#fff' : '#6B7280' }}>
                         Shared a post
                       </span>
+                      <span style={{ fontSize: 11, color: isMe ? 'rgba(255,255,255,0.8)' : '#9CA3AF' }}>
+                        Tap to view →
+                      </span>
                     </div>
                   </div>
+
                 ) : (
-                  /* Regular text message */
                   <div className={`max-w-[70%] sm:max-w-[60%] px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed
                     ${isMe
                       ? 'bg-accent text-white rounded-br-sm'
@@ -239,7 +256,7 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
                     {m.text}
                   </div>
                 )}
-                
+
                 {isMe && <Avatar user={currentUser} size="xs" />}
               </div>
             </div>
@@ -265,7 +282,6 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
   )
 }
 
-// ── New Message modal — pick a user to DM
 function NewMessageModal({ onClose, onSelect, users, existingWithIds }) {
   const [q, setQ] = useState('')
   const filtered = users.filter(u =>
@@ -311,15 +327,13 @@ function NewMessageModal({ onClose, onSelect, users, existingWithIds }) {
   )
 }
 
-// ── Main DM Page
 export default function DMPage() {
   const { convos, activeId, setActiveId, getUser, getOrCreate, sendMessage, markRead, unreadCount, friends, refreshConvos } = useContext(DMContext)
   const { user } = useAuth()
   const navigate = useNavigate()
   const [showNew, setShowNew] = useState(false)
-  const [mobileView, setMobileView] = useState('list') // 'list' | 'chat'
+  const [mobileView, setMobileView] = useState('list')
 
-  // Refresh conversations when navigating to DM page
   useEffect(() => { refreshConvos() }, [])
 
   const activeConvo = convos.find(c => c.id === activeId)
@@ -339,7 +353,6 @@ export default function DMPage() {
 
   return (
     <div className="flex flex-col h-screen pb-14 md:pb-0">
-      {/* Mobile: show navbar only on list view */}
       {mobileView === 'list' && (
         <div className="md:hidden">
           <Navbar title="Messages" showBack />
@@ -347,7 +360,6 @@ export default function DMPage() {
       )}
 
       <div className="flex flex-1 min-h-0">
-        {/* Convo list — full screen on mobile when mobileView=list */}
         <div className={`${mobileView === 'list' ? 'flex' : 'hidden'} md:flex flex-col w-full md:w-75 lg:w-85 shrink-0 border-r border-cream-border h-full`}>
           <div className="px-4 py-3.5 border-b border-cream-border flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -405,7 +417,7 @@ export default function DMPage() {
           </div>
         </div>
 
-        {/* Chat window */}
+        {/* Chat window — pass navigate down */}
         <div className={`${mobileView === 'chat' ? 'flex' : 'hidden'} md:flex flex-1 flex-col min-h-0`}>
           {activeConvo ? (
             <ChatWindow
@@ -413,7 +425,9 @@ export default function DMPage() {
               currentUser={user}
               getUser={getUser}
               onSend={sendMessage}
-              onBack={() => setMobileView('list')} />
+              onBack={() => setMobileView('list')}
+              navigate={navigate}
+            />
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center gap-3 text-ink-muted p-8 text-center">
               <span className="text-6xl opacity-10">✉</span>
@@ -428,7 +442,6 @@ export default function DMPage() {
         </div>
       </div>
 
-      {/* New message modal */}
       {showNew && (
         <NewMessageModal
           onClose={() => setShowNew(false)}
