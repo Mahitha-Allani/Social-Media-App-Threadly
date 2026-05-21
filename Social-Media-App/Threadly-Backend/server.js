@@ -20,11 +20,23 @@ const app = express()
 //use cors for backend and frontend interaction
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      const allowed = [
+        process.env.CLIENT_URL,
+        'http://localhost:5173',
+        'http://localhost:3000',
+      ]
+      // allow any vercel preview deployment
+      if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
-);
+)
 app.use(express.json())
 app.use(cookieParser())
 
