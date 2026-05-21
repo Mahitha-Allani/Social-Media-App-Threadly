@@ -18,11 +18,13 @@ const __dirname = path.dirname(__filename)
 const app = express()
 
 //use cors for backend and frontend interaction
-app.use(cors({ 
-    origin: function(origin, callback) { callback(null, true); }, 
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
+    credentials: true,
+  })
+);
 app.use(express.json())
 app.use(cookieParser())
 
@@ -50,9 +52,9 @@ const connectDB = async () => {
 }
 connectDB()
 
-if (process.env.NODE_ENV !== "production") {
-  app.listen(process.env.PORT || 5000, () => console.log(`server started on port ${process.env.PORT || 5000}`));
-}
+app.listen(process.env.PORT || 5000, () => {
+  console.log(`server started on port ${process.env.PORT || 5000}`);
+});
 
 //handling the error
 app.use((err, req, res, next) => {
