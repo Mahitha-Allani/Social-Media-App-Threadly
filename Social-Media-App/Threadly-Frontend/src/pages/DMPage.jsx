@@ -183,9 +183,10 @@ function ChatWindow({ convo, currentUser, getUser, onSend, onBack }) {
                       </span>
                     </div>
                   </div>
-                ) : m.sharedPost ? (
-                  <div className={`max-w-[75%] sm:max-w-[65%] rounded-2xl overflow-hidden ${isMe ? 'rounded-br-sm' : 'rounded-bl-sm'}`}
-                    style={{ border: '1px solid #E5E7EB' }}>
+               ) : m.sharedPost ? (
+  <div className={`max-w-[75%] sm:max-w-[65%] rounded-2xl overflow-hidden ${isMe ? 'rounded-br-sm' : 'rounded-bl-sm'}`}
+    style={{ border: '1px solid #E5E7EB', cursor: 'pointer' }}
+    onClick={() => navigate(`/post/${m.sharedPost._id || m.sharedPost.id}`)}>
                     {/* Post card */}
                     <div style={{ background: '#fff', padding: '12px 14px' }}>
                       {/* Post author */}
