@@ -292,19 +292,18 @@ export default function ProfilePage() {
           </span>
         </div>
       </div>
-
-      {/* Tabs */}
-      <div className={profile.tabBar}>
-        {['posts', 'likes'].map(tab => (
-          <button
-            key={tab}
-            className={activeTab === tab ? profile.tabActive : profile.tab}
-            onClick={() => handleTabChange(tab)}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
+{/* Tabs — likes tab only visible on own profile */}
+<div className={profile.tabBar}>
+  {(isOwn ? ['posts', 'likes'] : ['posts']).map(tab => (
+    <button
+      key={tab}
+      className={activeTab === tab ? profile.tabActive : profile.tab}
+      onClick={() => handleTabChange(tab)}
+    >
+      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+    </button>
+  ))}
+</div>
 
       {/* Posts / Likes */}
       {(activeTab === 'likes' && likedLoading) ? (
