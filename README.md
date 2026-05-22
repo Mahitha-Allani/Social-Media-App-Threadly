@@ -23,15 +23,10 @@ This project is separated into a dedicated backend (`Threadly-Backend`) and fron
 ## System Diagram & Structure
 
 ```mermaid
-graph TD
-    Client[Browser / Client (React + Vite)]
-    API[Backend API (Express.js)]
-    DB[(MongoDB)]
-    Cloudinary[(Cloudinary Storage)]
-
-    Client -->|HTTP / Axios| API
-    API -->|Mongoose ODM| DB
-    API -->|Image Uploads| Cloudinary
+graph LR
+    A["React + Vite Frontend"] -->|Axios Requests| B["Express.js Backend"]
+    B -->|Mongoose ODM| C[("MongoDB")]
+    B -->|Media Uploads| D[("Cloudinary")]
 ```
 
 ### **General Directory Layout**
