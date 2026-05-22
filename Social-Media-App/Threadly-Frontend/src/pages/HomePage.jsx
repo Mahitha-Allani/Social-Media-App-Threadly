@@ -19,6 +19,7 @@ export default function HomePage() {
     posts,
     loading,
     createPost,
+    updatePost,
     toggleLike,
     toggleBookmark,
     sharePost,
@@ -113,6 +114,7 @@ export default function HomePage() {
                   addReply(postId, commentId, txt, user)
                 }
                 onDeletePost={deletePost}
+                onEditPost={updatePost}
               />
             </div>
           ))

@@ -1,45 +1,83 @@
 import axiosInstance from './axiosInstance'
 
 export const postApi = {
-  // Create post with optional image
+
+  // CREATE POST
   createPost: (content, imageFile) => {
+
     const formData = new FormData()
+
     formData.append('content', content)
+
     if (imageFile instanceof File) {
       formData.append('images', imageFile)
     }
-    return axiosInstance.post('/posts', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+
+    return axiosInstance.post(
+      '/posts',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
   },
-  
-  // Get all posts
-  getAllPosts: () => axiosInstance.get('/posts/all'),
-  
-  // Get posts by user ID
-  getUserPosts: (userId) => axiosInstance.get(`/posts/user/${userId}`),
-  
-  // Get feed (posts from users you follow)
-  getFeed: () => axiosInstance.get('/posts/feed'),
-  
-  // Get single post
-  getPostById: (id) => axiosInstance.get(`/posts/${id}`),
-  
-  // Delete post
-  deletePost: (id) => axiosInstance.delete(`/posts/${id}`),
-  
-  // Like post
-  likePost: (id) => axiosInstance.post(`/posts/${id}/like`),
-  
-  // Add comment to post
-  addComment: (postId, content) => axiosInstance.post(`/posts/${postId}/comment`, { content }),
-  
-  // Add reply to comment
-  addReply: (postId, commentId, content) => axiosInstance.post(`/posts/${postId}/comment/${commentId}/reply`, { content }),
 
-  // Bookmark post
-  bookmarkPost: (id) => axiosInstance.post(`/posts/${id}/bookmark`),
+  // GET ALL POSTS
+  getAllPosts: () =>
+    axiosInstance.get('/posts/all'),
 
-  // Share post
-  sharePost: (id) => axiosInstance.post(`/posts/${id}/share`),
+  // GET USER POSTS
+  getUserPosts: (userId) =>
+    axiosInstance.get(`/posts/user/${userId}`),
+
+  // GET FEED
+  getFeed: () =>
+    axiosInstance.get('/posts/feed'),
+
+  // GET SINGLE POST
+  getPostById: (id) =>
+    axiosInstance.get(`/posts/${id}`),
+
+  // UPDATE POST  ← THIS WAS MISSING
+  updatePost: (postId, content) =>
+    axiosInstance.put(
+      `/posts/${postId}`,
+      { content }
+    ),
+
+  // DELETE POST
+  deletePost: (id) =>
+    axiosInstance.delete(`/posts/${id}`),
+
+  // LIKE POST
+  likePost: (id) =>
+    axiosInstance.post(`/posts/${id}/like`),
+
+  // COMMENT
+  addComment: (postId, content) =>
+    axiosInstance.post(
+      `/posts/${postId}/comment`,
+      { content }
+    ),
+
+  // REPLY
+  addReply: (
+    postId,
+    commentId,
+    content
+  ) =>
+    axiosInstance.post(
+      `/posts/${postId}/comment/${commentId}/reply`,
+      { content }
+    ),
+
+  // BOOKMARK
+  bookmarkPost: (id) =>
+    axiosInstance.post(`/posts/${id}/bookmark`),
+
+  // SHARE
+  sharePost: (id) =>
+    axiosInstance.post(`/posts/${id}/share`)
 }

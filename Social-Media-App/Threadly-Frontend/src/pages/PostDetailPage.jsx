@@ -22,7 +22,8 @@ export default function PostDetailPage() {
     toggleBookmark,
     addComment,
     addReply,
-    deletePost
+    deletePost,
+    updatePost
   } = usePosts()
 
   const post =
@@ -87,6 +88,8 @@ export default function PostDetailPage() {
         }
 
         onDeletePost={deletePost}
+
+        onEditPost={updatePost}
 
         compact
       />

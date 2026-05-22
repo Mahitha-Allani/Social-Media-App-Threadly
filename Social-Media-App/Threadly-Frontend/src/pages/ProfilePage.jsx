@@ -324,6 +324,15 @@ export default function ProfilePage() {
           onShare={handleShare}
           onAddComment={handleAddComment}
           onDeletePost={isOwn && activeTab === 'posts' ? handleDeletePost : null}
+          onEditPost={isOwn && activeTab === 'posts' ? async (postId, content) => {
+            setProfilePosts(prev => prev.map(post => post._id === postId ? { ...post, content } : post))
+            setLikedPosts(prev => prev.map(post => post._id === postId ? { ...post, content } : post))
+            try {
+              await postApi.updatePost(postId, content)
+            } catch (err) {
+              console.error('Error updating post:', err)
+            }
+          } : null}
         />
       ))}
 

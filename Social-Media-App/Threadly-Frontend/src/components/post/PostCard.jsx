@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import Avatar from '../common/Avatar'
@@ -18,6 +18,7 @@ export default function PostCard({
   onAddComment,
   onAddReply,
   onDeletePost,
+  onEditPost,
   compact = false
 }) {
 
@@ -30,6 +31,21 @@ export default function PostCard({
 
   const [showShare, setShowShare] =
     useState(false)
+
+  const [showMenu, setShowMenu] =
+    useState(false)
+
+  const [editing, setEditing] =
+    useState(false)
+
+  const [editText, setEditText] =
+    useState(post.content)
+
+  // IMPORTANT
+  // Update textarea value whenever post content changes
+  useEffect(() => {
+    setEditText(post.content)
+  }, [post.content])
 
   const author = post.userId
 
@@ -121,27 +137,144 @@ export default function PostCard({
 
               </div>
 
+              {/* 3 DOT MENU */}
               {isOwn && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation()
-                    onDeletePost?.(post._id)
-                  }}
-                  className="shrink-0 text-ink-muted hover:text-red-600 text-sm px-1 py-0.5 rounded-lg hover:bg-red-50 transition-colors border-0 bg-transparent cursor-pointer"
-                >
-                  ···
-                </button>
+
+                <div className="relative">
+
+                  <button
+                    onClick={e => {
+                      e.stopPropagation()
+                      setShowMenu(prev => !prev)
+                    }}
+                    className="shrink-0 text-ink-muted hover:text-black text-xl px-2 py-1 rounded-lg hover:bg-gray-100 transition-colors border-0 bg-transparent cursor-pointer"
+                  >
+                    ⋯
+                  </button>
+
+                  {showMenu && (
+
+                    <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50 w-40">
+
+                      {/* EDIT */}
+                      <button
+                        onClick={e => {
+                          e.stopPropagation()
+
+                          setEditing(true)
+
+                          setEditText(post.content)
+
+                          setShowMenu(false)
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-100 text-sm border-0 bg-transparent cursor-pointer"
+                      >
+                        ✏️ Edit Post
+                      </button>
+
+                      {/* DELETE */}
+                      <button
+                        onClick={e => {
+                          e.stopPropagation()
+
+                          setShowMenu(false)
+
+                          const confirmDelete =
+                            window.confirm(
+                              'Delete this post?'
+                            )
+
+                          if (confirmDelete) {
+                            onDeletePost?.(post._id)
+                          }
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-red-50 text-red-600 text-sm border-0 bg-transparent cursor-pointer"
+                      >
+                        🗑 Delete Post
+                      </button>
+
+                    </div>
+
+                  )}
+
+                </div>
+
               )}
 
             </div>
 
             {/* CONTENT */}
-            <p className={text.postContent}>
-              {post.content}
-            </p>
+            {editing ? (
+
+              <div className="mt-2">
+
+                <textarea
+                  value={editText}
+                  onChange={e =>
+                    setEditText(e.target.value)
+                  }
+                  className="w-full border border-gray-300 rounded-xl p-3 outline-none"
+                  rows={4}
+                />
+
+                <div className="flex gap-2 mt-2">
+
+                  <button
+                    onClick={async e => {
+
+                      e.stopPropagation()
+
+                      if (!editText.trim()) return
+
+                      try {
+
+                        await onEditPost?.(
+                          post._id,
+                          editText.trim()
+                        )
+
+                        // CLOSE EDIT MODE
+                        setEditing(false)
+
+                      } catch (err) {
+
+                        console.log(err)
+                      }
+                    }}
+                    className="bg-black text-white px-4 py-2 rounded-lg border-0 cursor-pointer"
+                  >
+                    Save
+                  </button>
+
+                  <button
+                    onClick={e => {
+
+                      e.stopPropagation()
+
+                      setEditing(false)
+
+                      setEditText(post.content)
+                    }}
+                    className="bg-gray-200 px-4 py-2 rounded-lg border-0 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                </div>
+
+              </div>
+
+            ) : (
+
+              <p className={text.postContent}>
+                {post.content}
+              </p>
+
+            )}
 
             {/* IMAGE */}
             {post.image && (
+
               <div className={P.image}>
 
                 <img
@@ -150,6 +283,7 @@ export default function PostCard({
                   loading="lazy"
                   className="w-full max-h-64 sm:max-h-80 object-cover rounded-2xl"
                   onError={(e) => {
+
                     console.log(
                       'Image failed:',
                       imageUrl
@@ -160,6 +294,7 @@ export default function PostCard({
                 />
 
               </div>
+
             )}
 
             {/* ACTIONS */}
@@ -176,12 +311,14 @@ export default function PostCard({
 
             {/* COMMENTS */}
             {showComments && (
+
               <CommentList
                 comments={post.comments}
                 postId={post._id}
                 onAddComment={onAddComment}
                 onAddReply={onAddReply}
               />
+
             )}
 
           </div>
@@ -192,11 +329,14 @@ export default function PostCard({
 
       {/* SHARE MODAL */}
       {showShare && (
+
         <ShareModal
           post={post}
           onClose={() => setShowShare(false)}
         />
+
       )}
+
     </>
   )
 }

@@ -340,6 +340,63 @@ postRouter.post('/:postId/comment/:commentId/reply', authMiddleware, async (req,
   }
 });
 
+
+// UPDATE POST
+postRouter.put(
+  '/:postId',
+  authMiddleware,
+  async (req, res) => {
+
+    try {
+
+      const { content } = req.body
+
+      const post =
+        await Post.findById(req.params.postId)
+
+      if (!post) {
+        return res.status(404).json({
+          error: 'Post not found'
+        })
+      }
+
+      // CHECK OWNER
+      if (
+        post.author.toString() !==
+        req.userId.toString()
+      ) {
+        return res.status(403).json({
+          error: 'Not authorized'
+        })
+      }
+
+      post.content = content
+
+      await post.save()
+
+      await post.populate(
+        'author',
+        'username name profileImage verified'
+      )
+
+      res.json(post)
+
+    } catch (error) {
+
+      console.log(
+        'Update post error:',
+        error
+      )
+
+      res.status(500).json({
+        error: 'Server error'
+      })
+    }
+  }
+)
+
+   
+
 // Delete post
 postRouter.delete('/:postId', authMiddleware, async (req, res) => {
   try {
