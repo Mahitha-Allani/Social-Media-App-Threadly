@@ -73,12 +73,14 @@ To take this platform live, you will deploy the two folders as separate apps:
 1. **Deploy Backend (e.g., to Render)**
    - Create a Web Service pointing to the `Threadly-Backend` directory.
    - Setup your `DB_URL` and `JWT_SECRET` variables.
-   - Get your assigned backend URL (e.g., `https://threadly-api.onrender.com`).
+   - Get your assigned backend URL.
+   - https://social-media-app-threadly.onrender.com
 
 2. **Deploy Frontend (e.g., to Vercel/Netlify)**
    - Create a static site pointing to the `Threadly-Frontend` directory.
    - Add the environment variable: `VITE_API_BASE_URL=https://threadly-api.onrender.com/api`.
    - Your frontend will now correctly point to your live production backend!
+   - https://social-media-app-threadly.vercel.app/
 
 ---
 

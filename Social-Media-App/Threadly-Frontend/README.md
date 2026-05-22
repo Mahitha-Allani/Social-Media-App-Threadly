@@ -1,87 +1,264 @@
 # Threadly - Frontend
 
-This is the frontend application for **Threadly**, built with React and Vite. It provides a beautiful, responsive, and interactive user interface for a full-stack social media platform.
+Frontend application for **Threadly**, a modern full-stack social media platform inspired by Threads/Twitter.
 
-## Tech Stack
-- **React.js**: UI Library.
-- **Vite**: Fast frontend build tool.
-- **Tailwind CSS**: Utility-first styling for modern and responsive designs.
-- **Axios**: HTTP client for API requests (configured with interceptors for JWT auth).
-- **React Router Dom**: For page navigation and routing.
+Built using **React + Vite**, this frontend delivers a fast, responsive, and interactive user experience with modern UI architecture and optimized API communication.
 
-##  Folder Structure
-```
+---
+
+# Live Deployment
+
+## Frontend (Vercel)
+
+https://social-media-app-threadly.vercel.app/
+
+---
+
+# Features
+
+- Modern Responsive UI
+- Authentication & Protected Routes
+- User Profiles & Follow System
+- Create Posts with Images
+- Like, Bookmark & Comment Features
+- Nested Comment Replies
+- Direct Messaging (DMs)
+- Share Posts in Chats
+- Notification System
+- Optimistic UI Updates
+- Axios Interceptors for Secure API Handling
+- Context API State Management
+
+---
+
+# Tech Stack
+
+## Frontend
+- React.js
+- Vite
+
+## Styling
+- Tailwind CSS
+
+## Routing
+- React Router DOM
+
+## API Communication
+- Axios
+
+## State Management
+- React Context API
+
+---
+
+# Folder Structure
+
+```bash
 Threadly-Frontend/
 │
-├── public/            # Static assets
+├── public/                # Static public assets
 ├── src/
-│   ├── api/           # Axios instance and API call wrappers (auth, post, user, message)
-│   ├── assets/        # Images, SVGs, and other local assets
-│   ├── components/    # Reusable UI components (Navbar, Modals, PostCards, etc.)
-│   ├── context/       # React Context Providers (AuthContext, DMContext)
-│   ├── hooks/         # Custom React hooks (useAuth, usePosts)
-│   ├── pages/         # Top-level Page components (Home, Profile, Messages, etc.)
-│   ├── styles/        # Additional stylesheets
-│   ├── utils/         # Helper functions
-│   ├── App.jsx        # Root application component mapping routes
-│   ├── main.jsx       # React DOM rendering entry point
-│   └── index.css      # Base Tailwind imports and core styles
+│   ├── api/               # Axios instances & API wrappers
+│   ├── assets/            # Images & SVG assets
+│   ├── components/        # Reusable UI components
+│   ├── context/           # Global state providers
+│   ├── hooks/             # Custom React hooks
+│   ├── pages/             # Application pages
+│   ├── styles/            # Additional styling files
+│   ├── utils/             # Utility/helper functions
+│   ├── App.jsx            # Main application routes
+│   ├── main.jsx           # React entry point
+│   └── index.css          # Tailwind base styles
 │
-├── .env               # Environment variables
-├── package.json       # Project dependencies
-├── tailwind.config.js # Tailwind CSS configuration
-└── vite.config.js     # Vite bundler configuration
+├── .env                   # Environment variables
+├── package.json           # Dependencies & scripts
+├── tailwind.config.js     # Tailwind configuration
+└── vite.config.js         # Vite configuration
 ```
 
-## Prerequisites & Installation
+---
 
-1. **Navigate to the frontend folder**:
-   ```bash
-   cd Threadly-Frontend
-   ```
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+# Installation & Setup
 
-## Environment Variables (.env)
-Create a `.env` file in the root of `Threadly-Frontend` and add the following keys. By default, it connects to the local backend.
+## 1. Navigate to Frontend Folder
+
+```bash
+cd Threadly-Frontend
+```
+
+## 2. Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+# Environment Variables
+
+Create a `.env` file in the root directory:
 
 ```env
-# Point this to your backend server URL (local or production)
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-##  Key Architecture & Features
+For production:
 
-### **Context API State Management**
-- **AuthContext**: Manages user session, JWT token (`threadly_token` in `localStorage`), login/register methods.
-- **DMContext**: Manages optimistic UI updates for Direct Messages, real-time message population, and unread counts.
+```env
+VITE_API_BASE_URL=https://social-media-app-threadly.onrender.com/api
+```
 
-### **API Interceptors**
-All API calls are routed through an `axiosInstance` that automatically intercepts requests to attach the `Bearer` token, and intercepts 401 responses to automatically log out users whose sessions have expired.
+---
 
-##  Deployments (Vercel / Netlify)
+# Running the Application
 
-### **Deploying on Vercel (Recommended)**
-Vite applications are incredibly easy to deploy on Vercel.
-1. Connect your GitHub repository to [Vercel](https://vercel.com/).
-2. Select the `Threadly-Frontend` folder as your Root Directory.
-3. Framework Preset: **Vite** will be auto-detected.
-4. Build Command: `npm run build`
-5. Output Directory: `dist`
-6. Add Environment Variable: `VITE_API_BASE_URL` = `<your-deployed-backend-url>/api`
-7. Click **Deploy**.
+## Development Mode
 
-### **Deploying on Render**
-1. Create a `Static Site` on Render.
-2. Root Directory: `Threadly-Frontend`
-3. Build Command: `npm run build`
-4. Publish Directory: `dist`
-5. Add the `VITE_API_BASE_URL` environment variable.
-
-##  Running Locally
 ```bash
 npm run dev
 ```
-The application will be served at [http://localhost:3000](http://localhost:3000).
+
+Application runs on:
+
+```bash
+http://localhost:5173
+```
+
+---
+
+# Frontend Architecture
+
+## Context API State Management
+
+### AuthContext
+Handles:
+- User authentication
+- Login/Register flow
+- Persistent JWT storage
+- Protected route handling
+
+### DMContext
+Handles:
+- Direct message state
+- Optimistic UI updates
+- Real-time message rendering
+- Unread message counts
+
+---
+
+# Axios Interceptors
+
+All API calls pass through a centralized Axios instance that:
+
+- Automatically attaches JWT Bearer Tokens
+- Handles expired sessions
+- Intercepts unauthorized responses
+- Simplifies API management
+
+---
+
+# Deployment Guide
+
+# Deploying on Vercel (Recommended)
+
+## Steps
+
+1. Push frontend code to GitHub.
+2. Login to Vercel.
+3. Import your repository.
+4. Set Root Directory:
+
+```bash
+Threadly-Frontend
+```
+
+5. Framework Preset:
+```bash
+Vite
+```
+
+6. Build Command:
+
+```bash
+npm run build
+```
+
+7. Output Directory:
+
+```bash
+dist
+```
+
+8. Add Environment Variable:
+
+```env
+VITE_API_BASE_URL=https://social-media-app-threadly.onrender.com/api
+```
+
+9. Click Deploy.
+
+---
+
+# Production Frontend URL
+
+```bash
+https://social-media-app-threadly.vercel.app/
+```
+
+---
+
+# Frontend ↔ Backend Communication
+
+```text
+React Frontend
+       │
+       ▼
+Axios API Requests
+       │
+       ▼
+Express Backend API
+       │
+ ┌─────┴─────┐
+ ▼           ▼
+MongoDB   Cloudinary
+```
+
+---
+
+# Performance & Optimization
+
+- Fast Vite bundling
+- Lazy component rendering
+- Optimistic UI updates
+- Reusable component architecture
+- Responsive mobile-first design
+- API abstraction layer
+
+---
+
+# Future Improvements
+
+- WebSocket Real-time Chat
+- Push Notifications
+- Story/Status Feature
+- Infinite Feed Scrolling
+- Dark/Light Theme Toggle
+- Search & Explore Page
+
+---
+
+# Backend API
+
+Backend API powers authentication, posts, messaging, notifications, and media uploads.
+
+Backend Deployment:
+
+```bash
+https://social-media-app-threadly.onrender.com
+```
+
+---
+
+# Contributors
+
+Developed collaboratively as a Full Stack MERN Social Media Platform Project.
