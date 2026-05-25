@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config'  //This loads variables from .env file.
 import express from "express"
 import {connect} from "mongoose"
 import cors from "cors"
@@ -11,11 +11,6 @@ import postRouter from "./Routes/postRoutes.js"
 import messageRouter from "./Routes/messageRoute.js"
 import notificationRouter from "./Routes/notificationRoute.js"
 import cookieParser from "cookie-parser"
-import path from "path"
-import { fileURLToPath } from "url"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const app = express()
 const server = createServer(app)
@@ -54,8 +49,6 @@ app.use('/api/messages', messageRouter)
 app.use('/api/notifications', notificationRouter)
 app.use('/api/auth-api', authRouter)
 
-// Serve uploads statically
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
 // mongodb connection
 const connectDB = async () => {

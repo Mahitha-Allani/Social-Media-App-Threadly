@@ -7,14 +7,9 @@ import multer from 'multer';
 import path from 'path';
 import { storage } from '../config/cloudinary.js';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
+
 
 const userRouter = express.Router();
-
-// recreate __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
