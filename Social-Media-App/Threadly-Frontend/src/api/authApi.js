@@ -1,3 +1,5 @@
+// authApi.js - Contains functions for making API calls related to authentication,
+//   such as login, registration, and fetching the current user's profile.
 import axiosInstance from './axiosInstance'
 
 export const authApi = {

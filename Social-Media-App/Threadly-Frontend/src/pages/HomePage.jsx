@@ -1,3 +1,6 @@
+// HomePage.jsx - Main feed page that displays the user's feed, allows creating new posts, and shows suggested users and trending posts in the sidebar.
+// This page uses the usePosts hook to manage post-related actions and the useAuth hook to access user information.
+//  It also fetches suggested users and trending posts to display in the right sidebar.     
 import { useMemo, useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'

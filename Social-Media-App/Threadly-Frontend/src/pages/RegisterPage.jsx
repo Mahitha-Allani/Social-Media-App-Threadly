@@ -1,3 +1,7 @@
+// RegisterPage.jsx - A registration page for new users to create an account on Threadly.
+// This page uses the useAuth hook to access the register function, which makes an API call to create a new user account.
+// The form includes fields for name, username, email, and password, and performs basic validation before submitting the registration request.
+
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
@@ -9,7 +13,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ name: '', username: '', email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
+// Handles form submission for user registration, including validation and API call to register the user.
   const handleSubmit = async e => {
     e.preventDefault(); setError('')
     if (!form.name || !form.username || !form.email || !form.password) { setError('Please fill in all fields.'); return }
@@ -24,7 +28,7 @@ export default function RegisterPage() {
     }
     finally { setLoading(false) }
   }
-
+// Form fields for registration, including name, username, email, and password.
   const fields = [
     { name: 'name',     label: 'Full Name', type: 'text',     ph: 'Enter your full name' },
     { name: 'username', label: 'Username',  type: 'text',     ph: 'Enter your username' },
@@ -32,6 +36,10 @@ export default function RegisterPage() {
     { name: 'password', label: 'Password',  type: 'password', ph: 'Enter your password' },
   ]
 
+  // If the registration is successful, the user is redirected to the login page with a success message. 
+  // If there is an error during registration, an error message is displayed to the user.
+
+  
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center p-4 sm:p-5">
       <div className={`${auth.card} mx-auto`}>

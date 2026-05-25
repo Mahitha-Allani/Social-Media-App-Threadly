@@ -1,3 +1,5 @@
+// userApi.js - Contains functions for making API calls related to user operations, such as fetching user profiles,
+// updating profiles, following/unfollowing users, searching for users, and uploading profile pictures.
 import axiosInstance from './axiosInstance'
 export const userApi = {
   getUserByUsername: (username) => axiosInstance.get(`/users/${username}`),

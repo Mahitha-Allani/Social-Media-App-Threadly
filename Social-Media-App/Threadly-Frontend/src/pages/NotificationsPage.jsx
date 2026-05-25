@@ -1,3 +1,5 @@
+// NotificationsPage.jsx - Page that displays the user's notifications,
+//  allowing them to see interactions such as likes, follows, comments, and messages.
 import { useState, useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Spinner from '../components/common/Spinner'
@@ -6,20 +8,21 @@ import { notificationApi } from '../api/notificationApi'
 
 const TYPE_BG = { like:'bg-red-50', follow:'bg-accent-light', comment:'bg-brand-blue-light', message:'bg-cream-dark' }
 const TYPE_ICON = { like:'❤️', follow:'👤', comment:'💬', message:'✉️' }
-
+//
 function formatTime(ts) {
-  const d = new Date(ts), now = new Date()
-  const diff = Math.floor((now - d) / 1000)
-  if (diff < 60) return 'now'
-  if (diff < 3600) return Math.floor(diff / 60) + 'm'
-  if (diff < 86400) return Math.floor(diff / 3600) + 'h'
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const d = new Date(ts), now = new Date()  // Calculate time difference in seconds and return a human-readable string like "now", "5m", "2h", or a date for older notifications.
+  const diff = Math.floor((now - d) / 1000)    // in seconds
+  if (diff < 60) return 'now'              // less than a minute
+  if (diff < 3600) return Math.floor(diff / 60) + 'm'   // less than an hour
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h'  // less than a day
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })  // else show date
 }
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
-
+// Fetch notifications on mount and mark them as read. This ensures that when the user visits the notifications page,
+// all notifications are fetched and any unread notifications are marked as read immediately.
   useEffect(() => {
     const fetchAndMarkRead = async () => {
       try {
@@ -40,7 +43,7 @@ export default function NotificationsPage() {
     }
     fetchAndMarkRead()
   }, [])
-
+// Helper to generate notification text based on type and sender info
   const getNotifText = (n) => {
     const name = n.senderId?.displayName || n.senderId?.username || 'Someone'
     switch(n.type) {
@@ -51,7 +54,7 @@ export default function NotificationsPage() {
       default: return `${name} interacted with you`
     }
   }
-
+// Main render
   return (
     <div>
       <Navbar title="Notifications" />

@@ -1,10 +1,12 @@
+// This context manages direct message conversations, including fetching conversations, sending messages,
+//  marking messages as read, and keeping track of friends for initiating new conversations.
 import { createContext, useState, useCallback, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { userApi } from '../api/userApi'
 import { messageApi } from '../api/messageApi'
 
 export const DMContext = createContext(null)
-
+// The DMProvider component wraps the app and provides DM-related state and functions to its children.
 export function DMProvider({ children }) {
   const { user } = useAuth()
   const [convos, setConvos] = useState([])
@@ -13,22 +15,24 @@ export function DMProvider({ children }) {
   
   useEffect(() => {
     const fetchData = async () => {
-      if (!user?._id) return
+      if (!user?._id) return // No user, no data
       try {
-        const [profileRes, convosRes] = await Promise.all([
+        const [profileRes, convosRes] = await Promise.all([ // Fetch user profile to get friends list
           userApi.getUserByUsername(user.username),
           messageApi.getConversations()
         ])
-        
+        // Extract friends from followers and following lists, ensuring uniqueness
         const profile = profileRes.data?.user
-        
+        // We use a Map to ensure uniqueness of friends from both followers and following lists
+        //map is used to store unique friends by their ID, ensuring we don't have duplicates from followers and following lists. 
         if (profile) {
           const uniqueFriends = new Map()
-          if (Array.isArray(profile.followers)) {
-             profile.followers.forEach(f => {
+          if (Array.isArray(profile.followers)) { // Check if followers is an array before iterating
+              profile.followers.forEach(f => {
                if (typeof f === 'object' && f._id) uniqueFriends.set(f._id, { ...f, name: f.displayName || f.name || f.username || 'Unknown' })
              })
           }
+          // similarly for following list, we check if it's an array and then iterate to add unique friends to the map. This way, we combine both lists without duplicates.
           if (Array.isArray(profile.following)) {
              profile.following.forEach(f => {
                if (typeof f === 'object' && f._id) uniqueFriends.set(f._id, { ...f, name: f.displayName || f.name || f.username || 'Unknown' })
@@ -36,7 +40,7 @@ export function DMProvider({ children }) {
           }
           setFriends(Array.from(uniqueFriends.values()))
         }
-
+// If conversations are successfully fetched, we set them in state. Each conversation includes the ID of the other user and the messages exchanged.
         if (convosRes.data) {
           setConvos(convosRes.data)
         }
@@ -47,6 +51,7 @@ export function DMProvider({ children }) {
     fetchData()
   }, [user])
 
+//
   const getUser = (id) => friends.find(u => u._id === id) || { _id: id, name: 'Unknown User', username: 'unknown' }
 
   const getOrCreate = useCallback((withUserId) => {
@@ -60,7 +65,7 @@ export function DMProvider({ children }) {
     setActiveId(newConvo.id)
     return newConvo.id
   }, [convos])
-
+//
   const sendMessage = useCallback(async (convoId, senderId, text) => {
     // optimistic update
     const tempId = 'm' + Date.now()
@@ -73,7 +78,7 @@ export function DMProvider({ children }) {
         }]
       }
     ))
-
+// API request
     try {
       const res = await messageApi.sendMessage(convoId, text)
       // update with actual DB payload
@@ -103,7 +108,7 @@ export function DMProvider({ children }) {
       console.error("Failed to mark read", err)
     }
   }, [user])
-
+// The refreshConvos function can be called to re-fetch the conversations from the backend, useful for syncing state after certain actions or on app focus.
   const refreshConvos = useCallback(async () => {
     try {
       const convosRes = await messageApi.getConversations()
@@ -114,9 +119,9 @@ export function DMProvider({ children }) {
       console.error("Failed to refresh conversations", err)
     }
   }, [])
-
+//
   const unreadCount = convos.reduce((acc, c) =>
-    acc + c.messages.filter(m => m.read === false && m.senderId !== user?._id).length, 0)
+    acc + c.messages.filter(m => m.read === false && m.senderId !== user?._id).length, 0)//
 
   return (
     <DMContext.Provider value={{ convos, activeId, setActiveId, getUser, getOrCreate, sendMessage, markRead, unreadCount, friends, refreshConvos }}>

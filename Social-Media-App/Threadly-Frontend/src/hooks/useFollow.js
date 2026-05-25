@@ -1,3 +1,6 @@
+// useFollow.js - Custom hook for managing follow/unfollow functionality in the application.
+// This hook provides functions to check if the current user is following another user and to toggle the follow state.
+// It also manages loading states for follow/unfollow actions to prevent multiple simultaneous requests.
 import { useState, useCallback } from 'react'
 import { useAuth } from './useAuth'
 import { userApi } from '../api/userApi'

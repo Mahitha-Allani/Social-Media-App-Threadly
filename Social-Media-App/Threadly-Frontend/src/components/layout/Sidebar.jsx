@@ -1,10 +1,12 @@
+// Sidebar.jsx - Main navigation sidebar component for desktop and mobile
+
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext } from 'react'
 import Avatar from '../common/Avatar'
 import { useAuth } from '../../hooks/useAuth'
 import { DMContext } from '../../context/DMContext'       
 import { nav, text, btn } from '../../styles/common'
-
+// Navigation items with paths, icons, and labels
 const NAV = [
   {path:'/',         icon:'⌂', label:'Home'},
   {path:'/explore',  icon:'⌕', label:'Explore'},
@@ -13,18 +15,18 @@ const NAV = [
   {path:'/bookmarks',icon:'☆', label:'Bookmarks'},
   {path:'/profile/me',icon:'☻',label:'Profile'},
 ]
-
+// Sidebar component definition
 export default function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
   const { unreadCount } = useContext(DMContext)         
-
+// Function to check if a navigation item is active based on the current URL
   const isActive = p =>
     p === '/profile/me' ? location.pathname.startsWith('/profile')
     : p === '/' ? location.pathname === '/'
     : location.pathname.startsWith(p)
-
+// Function to navigate to a path, with special handling for the profile path
   const go = p => p === '/profile/me' ? navigate(`/profile/${user?.username}`) : navigate(p)
 
   return (
@@ -54,7 +56,7 @@ export default function Sidebar() {
             </button>
           ))}
         </nav>
-
+//
         <button className={btn.sidebarPost} onClick={() => navigate('/?new_post=' + Date.now())}>
           <span className="lg:hidden text-xl leading-none">+</span>
           <span className="hidden lg:inline text-[15px]">+ New Post</span>

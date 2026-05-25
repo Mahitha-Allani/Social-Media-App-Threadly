@@ -1,3 +1,9 @@
+// ProfilePage.jsx - Page that displays the profile of a user, including their posts, followers, following, and bio.
+// The page allows the user to edit their own profile, view their posts and liked posts, and see their followers and following lists.
+// It uses the usePosts hook to manage post-related actions and the useAuth hook to access user information.
+// The useParams hook from react-router-dom is used to get the username from the URL and fetch the corresponding user profile and posts.
+
+
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
@@ -34,12 +40,12 @@ export default function ProfilePage() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [shareCopied, setShareCopied] = useState(false)
   const fileInputRef = useRef(null)
-
+// Fetch profile and posts when username changes
   useEffect(() => {
     setFollowModal(prev => ({ ...prev, isOpen: false }))
     setActiveTab('posts')
     setLikedPosts([])
-
+// Fetch profile
     const fetchProfile = async () => {
       try {
         setProfileLoading(true)
@@ -116,7 +122,9 @@ export default function ProfilePage() {
       }
     }
   }
-
+// Handlers for liking, bookmarking, sharing, commenting, and deleting posts.
+//  These handlers optimistically update the local state to reflect the change immediately in the UI, 
+//  while also making the corresponding API calls to update the backend.
   const isOwn = profileUser?._id === currentUser?._id || profileUser?.username === currentUser?.username
 
   const handleLike = async (postId) => {
@@ -136,7 +144,7 @@ export default function ProfilePage() {
       if (currentUser) await postApi.likePost(postId)
     } catch (err) { }
   }
-
+/// Bookmarking a post toggles the bookmark status for the current user and updates the local state accordingly.
   const handleBookmark = async (postId) => {
     const toggle = (list) => list.map(p => {
       if (p._id !== postId) return p
@@ -154,7 +162,7 @@ export default function ProfilePage() {
       if (currentUser) await postApi.bookmarkPost(postId)
     } catch (err) { }
   }
-
+// Sharing a post toggles the share status for the current user and updates the local state accordingly.
   const handleShare = async (postId) => {
     const toggle = (list) => list.map(p => {
       if (p._id !== postId) return p
@@ -172,7 +180,7 @@ export default function ProfilePage() {
       if (currentUser) await postApi.sharePost(postId)
     } catch (err) { }
   }
-
+//addimg a comment 
   const handleAddComment = async (postId, comment) => {
     const newComment = {
       _id: Date.now().toString(),
@@ -195,7 +203,7 @@ export default function ProfilePage() {
       await postApi.addComment(postId, comment)
     } catch (err) { }
   }
-
+//deleting a post
   const handleDeletePost = async (postId) => {
     setProfilePosts(prev => prev.filter(p => p._id !== postId))
     setLikedPosts(prev => prev.filter(p => p._id !== postId))
@@ -214,8 +222,9 @@ export default function ProfilePage() {
       setImagePreview(URL.createObjectURL(file))
     }
   }
-
+// edit
   const handleEditSave = async () => {
+
     setUploadingImage(true)
     try {
       if (imageFile) {
@@ -239,7 +248,7 @@ export default function ProfilePage() {
       setEditOpen(false)
     }
   }
-
+// Share the profile through DMs
   const handleShareProfile = () => {
     setShareModalOpen(true)
   }

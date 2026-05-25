@@ -1,3 +1,5 @@
+// BookmarksPage.jsx - Displays the user's bookmarked posts with options to like, share, comment, and delete posts. 
+// Shows an empty state if no bookmarks are found.
 import Navbar from '../components/layout/Navbar'
 import PostCard from '../components/post/PostCard'
 import Spinner from '../components/common/Spinner'
@@ -9,7 +11,7 @@ export default function BookmarksPage() {
   const { user } = useAuth()
   const { posts, loading, toggleLike, toggleBookmark, sharePost, addComment, addReply, deletePost } = usePosts()
   const bookmarked = posts.filter(p => p.bookmarks?.includes(user?._id))
-
+// Handles toggling the like status of a post by optimistically updating the UI and then making an API call to persist the change.
   return (
     <div>
       <Navbar title="Bookmarks" />

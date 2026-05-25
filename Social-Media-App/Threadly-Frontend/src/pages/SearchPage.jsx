@@ -1,3 +1,9 @@
+// SearchPage.jsx - A search page for users to find other users and posts on Threadly.
+// This page uses the usePosts hook to access the list of posts and the useAuth hook to access user information.
+// It also makes an API call to search for users based on the query entered in the search input field.
+//  The search results are displayed in two tabs: one for users and one for posts.
+
+
 import { useState, useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import UserCard from '../components/user/UserCard'
@@ -17,7 +23,7 @@ export default function SearchPage() {
   const [users, setUsers] = useState([])
   const [loadingUsers, setLoadingUsers] = useState(true)
   const [usersError, setUsersError] = useState(null)
-
+// The useEffect hook is used to perform a search for users whenever the query changes.
   useEffect(() => {
     let cancelled = false
     const timer = setTimeout(async () => {
@@ -41,7 +47,7 @@ export default function SearchPage() {
       clearTimeout(timer)
     }
   }, [query])
-
+//
   return (
     <div>
       <Navbar title="Search" />

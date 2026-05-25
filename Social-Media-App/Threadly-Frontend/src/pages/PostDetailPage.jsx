@@ -1,3 +1,6 @@
+// PostDetailPage.jsx - Page that shows the details of a single post, including its content, likes, bookmarks, and comments.
+// This page uses the usePosts hook to manage post-related actions and the useAuth hook to access user information.
+// It also uses the useParams hook from react-router-dom to get the post ID from the URL and fetch the corresponding post details from the list of posts in state.
 import { useParams } from 'react-router-dom'
 
 import Navbar from '../components/layout/Navbar'
@@ -28,7 +31,7 @@ export default function PostDetailPage() {
 
   const post =
     posts.find(p => p._id === id)
-
+// If the posts are still loading, display a spinner to indicate that the content is being fetched from the server.
   if (loading) {
 
     return (
@@ -38,7 +41,7 @@ export default function PostDetailPage() {
       </>
     )
   }
-
+// If no post is found with the given ID, display an empty state message to the user indicating that the post was not found.
   if (!post) {
 
     return (
@@ -59,7 +62,7 @@ export default function PostDetailPage() {
       </>
     )
   }
-
+// If the post is found and loaded, render the post details using the PostCard component, along with the list of comments and replies.
   return (
     <div>
 

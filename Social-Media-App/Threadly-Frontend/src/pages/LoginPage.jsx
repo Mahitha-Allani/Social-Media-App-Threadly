@@ -1,3 +1,6 @@
+// LoginPage.jsx - Page for user login, containing a form for email and password input, and handling authentication logic.
+// This page uses the useAuth hook to access the login function and manage authentication state. 
+// It also handles form submission, displays error/success messages, and redirects on successful login.
 import { useState, useEffect } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'

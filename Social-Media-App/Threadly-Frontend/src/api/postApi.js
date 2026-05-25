@@ -1,3 +1,5 @@
+// postApi.js - Contains functions for making API calls related to posts, such as creating a post,
+// fetching posts, liking a post, commenting on a post, and sharing a post.
 import axiosInstance from './axiosInstance'
 
 export const postApi = {

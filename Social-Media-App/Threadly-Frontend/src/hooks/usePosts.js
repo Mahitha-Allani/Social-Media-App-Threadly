@@ -1,3 +1,7 @@
+// usePosts.js - Custom hook for managing posts in the application, including fetching posts, creating new posts,
+// liking, bookmarking, sharing, commenting, and replying to posts. This hook abstracts away the logic for interacting
+// with the post API and managing local state for posts, providing a clean interface for components to use.
+
 import { useState, useEffect, useCallback } from 'react'
 import { postApi } from '../api/postApi'
 

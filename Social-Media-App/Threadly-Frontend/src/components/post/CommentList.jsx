@@ -1,16 +1,21 @@
+// This component renders a list of comments for a post, along with the ability to add new comments and replies.
 import { useState } from 'react'
 import Avatar from '../common/Avatar'
 import { formatDate } from '../../utils/formatDate'
 import { useAuth } from '../../hooks/useAuth'
 import { input, btn, text } from '../../styles/common'
-
+// Props:
+// - comments: Array of comment objects to display.
+// - postId: ID of the post these comments belong to.
+// - onAddComment: Function to call when adding a new comment.
+// - onAddReply: Function to call when adding a reply to a comment.
 export default function CommentList({ comments = [], postId, onAddComment, onAddReply }) {
   const { user } = useAuth()
   const [txt, setTxt] = useState('')
   const [sub, setSub] = useState(false)
   const [replyingTo, setReplyingTo] = useState(null)
   const [replyTxt, setReplyTxt] = useState('')
-
+// Handles submitting a new comment to the post.
   const handle = async e => {
     e.preventDefault()
     if (!txt.trim() || sub) return
@@ -18,7 +23,7 @@ export default function CommentList({ comments = [], postId, onAddComment, onAdd
     await onAddComment?.(postId, txt.trim())
     setTxt(''); setSub(false)
   }
-
+// Handles submitting a reply to a specific comment.
   const handleReplySubmit = async (e, commentId) => {
     e.preventDefault()
     if (!replyTxt.trim() || sub) return
@@ -26,7 +31,7 @@ export default function CommentList({ comments = [], postId, onAddComment, onAdd
     await onAddReply?.(postId, commentId, replyTxt.trim(), user)
     setReplyTxt(''); setReplyingTo(null); setSub(false)
   }
-
+// Renders the list of comments and their replies, along with input fields for adding new comments and replies.
   return (
     <div className="mt-3">
       {comments.map(c => (

@@ -1,3 +1,6 @@
+// DMPage.jsx - Main page for Direct Messages. Displays a list of conversations on the left and the active conversation on the right.
+// Supports mobile view with a toggle between the conversation list and chat window. 
+// Allows starting new conversations, sending messages, and viewing shared profiles/posts within messages.
 import { useState, useEffect, useRef, useContext } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { DMContext } from '../context/DMContext'
