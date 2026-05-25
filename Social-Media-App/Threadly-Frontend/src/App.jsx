@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
-import { DMProvider } from './context/DMContext'           
+import { DMProvider } from './context/DMContext'
+import { NotificationProvider } from './context/NotificationContext'           
 import ProtectedRoute from './components/layout/ProtectedRoute'
 import Sidebar from './components/layout/Sidebar'
 import LoginPage          from './pages/LoginPage'
@@ -62,11 +63,13 @@ function AppLayout() {
 export default function App() {
   return (
     <AuthProvider>
-      <DMProvider>                                         
-        <BrowserRouter>
-          <AppLayout />
-        </BrowserRouter>
-      </DMProvider>                                 
+      <NotificationProvider>
+        <DMProvider>
+          <BrowserRouter>
+            <AppLayout />
+          </BrowserRouter>
+        </DMProvider>
+      </NotificationProvider>
     </AuthProvider>
   )
 }

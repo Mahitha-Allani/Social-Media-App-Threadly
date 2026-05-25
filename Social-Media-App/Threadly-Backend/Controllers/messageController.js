@@ -2,6 +2,7 @@ import Notification from "../Models/notificationModel.js";
 import Message from "../Models/messageModel.js";
 import Post from "../Models/postModel.js";
 import User from "../Models/userModel.js";
+import { sendNotification } from "../Services/socketService.js";
 
 // Get all conversations for the logged in user
 export const getConversations = async (req, res) => {
@@ -125,12 +126,21 @@ export const sendMessage = async (req, res) => {
     }
 
     // Create notification
-    await Notification.create({
+    const notification = await Notification.create({
       receiverId,
       senderId,
       type: 'message',
       text: postId ? 'Shared a post' : profileId ? 'Shared a profile' : (text || '').substring(0, 50)
     });
+
+    try {
+      const populatedNotification = await Notification.findById(notification._id)
+        .populate("senderId", "username name profileImage")
+        .populate("postId", "content");
+      sendNotification(receiverId, populatedNotification);
+    } catch (err) {
+      console.error("Failed to emit real-time message notification:", err);
+    }
 
     const response = {
       id: newMessage._id.toString(),

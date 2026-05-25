@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import Spinner from '../components/common/Spinner'
 import { card } from '../styles/common'
-import { notificationApi } from '../api/notificationApi'
+import { useNotifications } from '../context/NotificationContext'
 
-const TYPE_BG = { like:'bg-red-50', follow:'bg-accent-light', comment:'bg-brand-blue-light', message:'bg-cream-dark' }
-const TYPE_ICON = { like:'❤️', follow:'👤', comment:'💬', message:'✉️' }
+const TYPE_BG = { like:'bg-red-50', follow:'bg-accent-light', comment:'bg-brand-blue-light', reply:'bg-brand-blue-light', message:'bg-cream-dark' }
+const TYPE_ICON = { like:'❤️', follow:'👤', comment:'💬', reply:'💬', message:'✉️' }
 //
 function formatTime(ts) {
   const d = new Date(ts), now = new Date()  // Calculate time difference in seconds and return a human-readable string like "now", "5m", "2h", or a date for older notifications.
@@ -19,37 +19,20 @@ function formatTime(ts) {
 }
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState([])
-  const [loading, setLoading] = useState(true)
-// Fetch notifications on mount and mark them as read. This ensures that when the user visits the notifications page,
-// all notifications are fetched and any unread notifications are marked as read immediately.
+  const { notifications, markAllAsRead } = useNotifications()
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
-    const fetchAndMarkRead = async () => {
-      try {
-        setLoading(true)
-        const res = await notificationApi.getNotifications()
-        setNotifications(res.data)
-        
-        // Mark as read immediately when viewed locally as well
-        const hasUnread = res.data.some(n => !n.read)
-        if (hasUnread) {
-          await notificationApi.markReadAll()
-        }
-      } catch (err) {
-        console.error("Failed to fetch notifications", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchAndMarkRead()
-  }, [])
+    markAllAsRead()
+  }, [markAllAsRead])
 // Helper to generate notification text based on type and sender info
   const getNotifText = (n) => {
-    const name = n.senderId?.displayName || n.senderId?.username || 'Someone'
+    const name = n.senderId?.displayName || n.senderId?.name || n.senderId?.username || 'Someone'
     switch(n.type) {
       case 'like': return `${name} liked your post`
       case 'follow': return `${name} started following you`
-      case 'comment': return `${name} replied to your post`
+      case 'comment': return `${name} commented on your post`
+      case 'reply': return `${name} replied to your comment`
       case 'message': return `${name} sent you a message`
       default: return `${name} interacted with you`
     }

@@ -2,6 +2,8 @@ import 'dotenv/config'
 import express from "express"
 import {connect} from "mongoose"
 import cors from "cors"
+import { createServer } from "http"
+import { initSocket } from "./Services/socketService.js"
 import commentRoutes from "./Routes/commentRoutes.js"
 import  userRouter  from './Routes/userRoutes.js'
 import authRouter from "./Routes/authRoutes.js"
@@ -16,6 +18,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
+const server = createServer(app)
+initSocket(server)
 
 //use cors for backend and frontend interaction
 app.use(
@@ -64,7 +68,7 @@ const connectDB = async () => {
 }
 connectDB()
 
-app.listen(process.env.PORT || 5000, () => {
+server.listen(process.env.PORT || 5000, () => {
   console.log(`server started on port ${process.env.PORT || 5000}`);
 });
 

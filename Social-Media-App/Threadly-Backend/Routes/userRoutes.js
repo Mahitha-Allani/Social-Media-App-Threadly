@@ -2,6 +2,7 @@ import express from 'express';
 import authMiddleware from '../Middleware/authMiddleware.js';
 import Post from '../Models/postModel.js'
 import User from '../Models/userModel.js';
+import { sendNotification } from '../Services/socketService.js';
 import multer from 'multer';
 import path from 'path';
 import { storage } from '../config/cloudinary.js';
@@ -195,11 +196,19 @@ userRouter.post('/:userId/follow', authMiddleware, async (req, res) => {
 
     // Create notification
     const Notification = (await import('../Models/notificationModel.js')).default;
-    await Notification.create({
+    const notification = await Notification.create({
       receiverId: userIdToFollow,
       senderId: req.userId,
       type: 'follow'
     });
+
+    try {
+      const populatedNotification = await Notification.findById(notification._id)
+        .populate("senderId", "username name profileImage");
+      sendNotification(userIdToFollow, populatedNotification);
+    } catch (err) {
+      console.error("Failed to emit real-time follow notification:", err);
+    }
 
     const updatedUser = await User.findById(req.userId).select('-password');
     res.json({ message: "Followed successfully", user: updatedUser });

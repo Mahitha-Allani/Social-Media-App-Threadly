@@ -4,6 +4,7 @@ const postRouter = express.Router();
 import authMiddleware from '../Middleware/authMiddleware.js';
 import Post from '../Models/postModel.js'
 import User from '../Models/userModel.js'
+import { sendNotification } from '../Services/socketService.js';
 import multer from 'multer';
 import path from 'path';
 import { storage } from '../config/cloudinary.js';
@@ -169,12 +170,21 @@ postRouter.post('/:postId/like', authMiddleware, async (req, res) => {
       // Create notification
       if (post.author.toString() !== req.userId.toString()) {
         const Notification = (await import('../Models/notificationModel.js')).default;
-        await Notification.create({
+        const notification = await Notification.create({
           receiverId: post.author,
           senderId: req.userId,
           type: 'like',
           postId: post._id
         });
+        
+        try {
+          const populatedNotification = await Notification.findById(notification._id)
+            .populate("senderId", "username name profileImage")
+            .populate("postId", "content");
+          sendNotification(post.author, populatedNotification);
+        } catch (err) {
+          console.error("Failed to emit real-time like notification:", err);
+        }
       }
     }
 
@@ -272,13 +282,22 @@ postRouter.post('/:postId/comment', authMiddleware, async (req, res) => {
     // Create notification
     if (post.author.toString() !== req.userId.toString()) {
       const Notification = (await import('../Models/notificationModel.js')).default;
-      await Notification.create({
+      const notification = await Notification.create({
         receiverId: post.author,
         senderId: req.userId,
         type: 'comment',
         postId: post._id,
         text: content.substring(0, 50)
       });
+
+      try {
+        const populatedNotification = await Notification.findById(notification._id)
+          .populate("senderId", "username name profileImage")
+          .populate("postId", "content");
+        sendNotification(post.author, populatedNotification);
+      } catch (err) {
+        console.error("Failed to emit real-time comment notification:", err);
+      }
     }
 
     await post.populate('author', 'username name profileImage verified');
@@ -319,13 +338,22 @@ postRouter.post('/:postId/comment/:commentId/reply', authMiddleware, async (req,
     // Create notification for comment author
     if (comment.user.toString() !== req.userId.toString()) {
       const Notification = (await import('../Models/notificationModel.js')).default;
-      await Notification.create({
+      const notification = await Notification.create({
         receiverId: comment.user,
         senderId: req.userId,
         type: 'reply',
         postId: post._id,
         text: content.substring(0, 50)
       });
+
+      try {
+        const populatedNotification = await Notification.findById(notification._id)
+          .populate("senderId", "username name profileImage")
+          .populate("postId", "content");
+        sendNotification(comment.user, populatedNotification);
+      } catch (err) {
+        console.error("Failed to emit real-time reply notification:", err);
+      }
     }
 
     await post.populate('author', 'username name profileImage verified');

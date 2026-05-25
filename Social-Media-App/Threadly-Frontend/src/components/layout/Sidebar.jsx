@@ -4,7 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext } from 'react'
 import Avatar from '../common/Avatar'
 import { useAuth } from '../../hooks/useAuth'
-import { DMContext } from '../../context/DMContext'       
+import { DMContext } from '../../context/DMContext'
+import { useNotifications } from '../../context/NotificationContext'       
 import { nav, text, btn } from '../../styles/common'
 // Navigation items with paths, icons, and labels
 const NAV = [
@@ -20,7 +21,8 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuth()
-  const { unreadCount } = useContext(DMContext)         
+  const { unreadCount } = useContext(DMContext)
+  const { unreadCount: notifUnreadCount } = useNotifications()
 // Function to check if a navigation item is active based on the current URL
   const isActive = p =>
     p === '/profile/me' ? location.pathname.startsWith('/profile')
@@ -52,7 +54,14 @@ export default function Sidebar() {
                   {unreadCount}
                 </span>
               )}
-              {isActive(item.path) && item.path !== '/messages' && <span className={nav.dot} />}
+              {/* Unread badge on Notifications */}
+              {item.path === '/notifications' && notifUnreadCount > 0 && (
+                <span className="absolute top-1.5 left-7 lg:static lg:ml-auto bg-accent text-white text-[10px] font-bold min-w-4.5 h-4.5 rounded-full flex items-center justify-center px-1">
+                  {notifUnreadCount}
+                </span>
+              )}
+              {isActive(item.path) && item.path !== '/messages' && item.path !== '/notifications' && <span className={nav.dot} />}
+              {isActive(item.path) && item.path === '/notifications' && notifUnreadCount === 0 && <span className={nav.dot} />}
             </button>
           ))}
         </nav>
@@ -88,6 +97,11 @@ export default function Sidebar() {
             {item.path === '/messages' && unreadCount > 0 && (
               <span className="absolute top-0.5 right-1 bg-accent text-white text-[9px] font-bold min-w-3.5 h-3.5 rounded-full flex items-center justify-center px-0.5">
                 {unreadCount}
+              </span>
+            )}
+            {item.path === '/notifications' && notifUnreadCount > 0 && (
+              <span className="absolute top-0.5 right-1 bg-accent text-white text-[9px] font-bold min-w-3.5 h-3.5 rounded-full flex items-center justify-center px-0.5">
+                {notifUnreadCount}
               </span>
             )}
           </button>
