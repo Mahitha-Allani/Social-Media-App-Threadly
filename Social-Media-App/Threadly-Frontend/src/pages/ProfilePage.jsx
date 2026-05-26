@@ -31,7 +31,7 @@ export default function ProfilePage() {
   const [profileLoading, setProfileLoading] = useState(true)
   const [likedLoading, setLikedLoading] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
-  const [editForm, setEditForm] = useState({ name: currentUser?.name || '', bio: currentUser?.bio || '' })
+  const [editForm, setEditForm] = useState({ name: currentUser?.name || '', bio: currentUser?.bio || '', verified: currentUser?.verified || false })
   const [activeTab, setActiveTab] = useState('posts')
   const [followModal, setFollowModal] = useState({ isOpen: false, type: 'followers' })
   const [shareModalOpen, setShareModalOpen] = useState(false)
@@ -188,6 +188,7 @@ export default function ProfilePage() {
         _id: currentUser?._id,
         name: currentUser?.name || 'User',
         username: currentUser?.username,
+        verified: currentUser?.verified || false,
         profileImage: currentUser?.profileImage || currentUser?.profilePicture,
         profilePicture: currentUser?.profileImage || currentUser?.profilePicture
       },
@@ -232,13 +233,13 @@ export default function ProfilePage() {
         formData.append('image', imageFile)
         const imgRes = await userApi.uploadProfilePicture(formData)
         const newImageUrl = imgRes.data.profileImage
-        updateUser({ name: editForm.name, bio: editForm.bio, profileImage: newImageUrl })
-        setProfileUser(prev => ({ ...prev, name: editForm.name, bio: editForm.bio, profileImage: newImageUrl }))
+        updateUser({ name: editForm.name, bio: editForm.bio, profileImage: newImageUrl, verified: editForm.verified })
+        setProfileUser(prev => ({ ...prev, name: editForm.name, bio: editForm.bio, profileImage: newImageUrl, verified: editForm.verified }))
       } else {
-        updateUser({ name: editForm.name, bio: editForm.bio })
-        setProfileUser(prev => ({ ...prev, name: editForm.name, bio: editForm.bio }))
+        updateUser({ name: editForm.name, bio: editForm.bio, verified: editForm.verified })
+        setProfileUser(prev => ({ ...prev, name: editForm.name, bio: editForm.bio, verified: editForm.verified }))
       }
-      await userApi.updateProfile({ name: editForm.name, bio: editForm.bio })
+      await userApi.updateProfile({ name: editForm.name, bio: editForm.bio, verified: editForm.verified })
     } catch (err) {
       console.error('Error saving profile:', err)
     } finally {
@@ -272,7 +273,10 @@ export default function ProfilePage() {
             {shareCopied ? '✓ Copied!' : '↗ Share'}
           </button>
           {isOwn
-            ? <button className={btn.secondarySm} onClick={() => setEditOpen(true)}>Edit Profile</button>
+            ? <button className={btn.secondarySm} onClick={() => {
+                setEditForm({ name: currentUser?.name || '', bio: currentUser?.bio || '', verified: currentUser?.verified || false })
+                setEditOpen(true)
+              }}>Edit Profile</button>
             : <FollowButton targetUserId={profileUser?._id} size="sm" />}
         </div>
       </div>
@@ -372,6 +376,19 @@ export default function ProfilePage() {
                 : <input type="text" value={editForm[f.key]} onChange={e => setEditForm(p => ({ ...p, [f.key]: e.target.value }))} className={input.base} />}
             </div>
           ))}
+          <div className="flex items-center gap-3 py-2 border-t border-cream-border mt-2 pt-3">
+            <input 
+              type="checkbox" 
+              id="verified-checkbox"
+              checked={editForm.verified} 
+              onChange={e => setEditForm(p => ({ ...p, verified: e.target.checked }))} 
+              className="w-4 h-4 rounded text-accent focus:ring-accent accent-accent cursor-pointer"
+            />
+            <label htmlFor="verified-checkbox" className="text-sm font-medium text-ink cursor-pointer select-none flex items-center gap-1.5">
+              <span>Show Verified Account Badge</span>
+              <VerifiedBadge size={14} />
+            </label>
+          </div>
           <div className="flex gap-2.5 mt-1">
             <button className={btn.secondaryLg} onClick={() => { setEditOpen(false); setImageFile(null); setImagePreview(null) }}>Cancel</button>
             <button className={btn.primaryLg} onClick={handleEditSave} disabled={uploadingImage}>

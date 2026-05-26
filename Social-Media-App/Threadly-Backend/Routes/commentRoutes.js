@@ -34,7 +34,7 @@ commentRoutes.get("/post/:postId", async (req, res) => {
   try {
 
     const comments = await Comment.find({ post: req.params.postId })
-      .populate("user", "username profileImage")
+      .populate("user", "username profileImage verified")
       .sort({ createdAt: -1 });
 
     res.status(200).json(comments);
@@ -63,7 +63,7 @@ commentRoutes.post("/likes/:commentId", authMiddleware, async (req, res) => {
     }
 
     await comment.save();
-    await comment.populate('user', 'username name profileImage');
+    await comment.populate('user', 'username name profileImage verified');
 
     res.json(comment);
 

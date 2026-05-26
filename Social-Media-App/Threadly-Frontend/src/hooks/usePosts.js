@@ -461,6 +461,10 @@ export function usePosts() {
           username:
             currentUser?.username,
 
+          verified:
+            currentUser?.verified ||
+            false,
+
           profileImage:
             currentUser?.profileImage ||
             currentUser?.profilePicture
@@ -530,7 +534,11 @@ export function usePosts() {
             currentUser?.name,
 
           username:
-            currentUser?.username
+            currentUser?.username,
+
+          verified:
+            currentUser?.verified ||
+            false
         },
 
         content,

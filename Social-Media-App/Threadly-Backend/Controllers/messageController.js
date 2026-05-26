@@ -16,7 +16,7 @@ export const getConversations = async (req, res) => {
       .populate({
         path: 'postId',
         select: 'content image author',
-        populate: { path: 'author', select: 'username name profileImage' }
+        populate: { path: 'author', select: 'username name profileImage verified' }
       })
       .populate({
         path: 'profileId',
@@ -96,7 +96,7 @@ export const sendMessage = async (req, res) => {
     if (postId) {
       const post = await Post.findById(postId)
         .select('content image author')
-        .populate('author', 'username name profileImage');
+        .populate('author', 'username name profileImage verified');
       if (post) {
         sharedPost = {
           _id: post._id,
@@ -135,7 +135,7 @@ export const sendMessage = async (req, res) => {
 
     try {
       const populatedNotification = await Notification.findById(notification._id)
-        .populate("senderId", "username name profileImage")
+        .populate("senderId", "username name profileImage verified")
         .populate("postId", "content");
       sendNotification(receiverId, populatedNotification);
     } catch (err) {

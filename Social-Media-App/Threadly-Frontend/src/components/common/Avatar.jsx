@@ -2,6 +2,7 @@
 //it is done with a simple hashing function to generate a color from the username or user ID, 
 // ensuring that each user has a unique and consistent avatar color across the app. The component also handles different sizes and allows for additional styling through className props.
 import { av } from '../../styles/common'
+// Function to generate a color from the user's name or ID
 const PALETTE = ['#c2603b','#3b7ac2','#3b8c5a','#8c3b7a','#7a8c3b','#3b6e8c']
 function getColor(str='') { let h=0; for(let i=0;i<str.length;i++) h=str.charCodeAt(i)+((h<<5)-h); return PALETTE[Math.abs(h)%PALETTE.length] }
 function getInitials(name='') { return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() }

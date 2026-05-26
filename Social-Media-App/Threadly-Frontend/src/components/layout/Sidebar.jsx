@@ -3,6 +3,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext } from 'react'
 import Avatar from '../common/Avatar'
+import VerifiedBadge from '../common/VerifiedBadge'
 import { useAuth } from '../../hooks/useAuth'
 import { DMContext } from '../../context/DMContext'
 import { useNotifications } from '../../context/NotificationContext'       
@@ -75,7 +76,10 @@ export default function Sidebar() {
             onClick={() => navigate(`/profile/${user.username}`)}>
             <Avatar user={user} size="sm" />
             <div className="flex-1 min-w-0 hidden lg:block">
-              <div className="font-bold text-[13px] text-ink truncate">{user.name}</div>
+              <div className="font-bold text-[13px] text-ink truncate flex items-center gap-1">
+                <span>{user.name}</span>
+                {user.verified && <VerifiedBadge size={12} />}
+              </div>
               <div className="text-xs text-ink-muted">@{user.username}</div>
             </div>
             <button onClick={e => { e.stopPropagation(); logout() }}

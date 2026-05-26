@@ -9,6 +9,7 @@ import PostCard from '../components/post/PostCard'
 import Spinner from '../components/common/Spinner'
 import UserCard from '../components/user/UserCard'
 import Avatar from '../components/common/Avatar'
+import VerifiedBadge from '../components/common/VerifiedBadge'
 import { usePosts } from '../hooks/usePosts'
 import { useAuth } from '../hooks/useAuth'
 import { userApi } from '../api/userApi'
@@ -187,14 +188,15 @@ export default function HomePage() {
                   className="px-4 py-3 hover:bg-cream-dark transition-colors cursor-pointer border-b border-cream-border last:border-0"
                   onClick={() => navigate(`/post/${p._id}`)}
                 >
-                  <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                     <Avatar user={p.userId} size="xs" />
 
                     <span className="font-semibold text-[13px] text-ink truncate">
                       {p.userId?.name || 'Unknown'}
                     </span>
+                    {p.userId?.verified && <VerifiedBadge size={11} />}
 
-                    <span className="text-[11px] text-ink-muted">
+                    <span className="text-[11px] text-ink-muted truncate">
                       @{p.userId?.username}
                     </span>
                   </div>

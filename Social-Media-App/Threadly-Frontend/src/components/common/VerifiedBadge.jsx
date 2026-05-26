@@ -1,9 +1,27 @@
-// VerifiedBadge component for displaying a checkmark badge, typically used to indicate verified accounts or content. The badge is a circular icon with a checkmark inside, and its size can be customized through props. The SVG element is styled to maintain a consistent appearance, with a margin and flex-shrink property to ensure it fits well within different layouts.
-export default function VerifiedBadge({ size=14 }) {
+// VerifiedBadge component for displaying a checkmark badge, typically used to indicate verified accounts or content.
+// Uses a vibrant blue color for high visibility and proper alignment next to usernames.
+export default function VerifiedBadge({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" style={{marginLeft:3,flexShrink:0}}>
-      <circle cx="12" cy="12" r="12" fill="#c2603b"/>
-      <path d="M7 12.5l3.5 3.5 6.5-7" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 22 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ marginLeft: 3, flexShrink: 0, display: 'inline-block', verticalAlign: 'middle' }}
+      aria-label="Verified account"
+      role="img"
+    >
+      {/* Shield / badge shape path — like Twitter/X verified */}
+      <path
+        d="M20.396 11c.002-.43-.112-.856-.33-1.232a2.21 2.21 0 00-.876-.858 2.222 2.222 0 01-.84-.89 2.23 2.23 0 01-.227-1.21c.063-.56-.063-1.125-.355-1.594a2.22 2.22 0 00-1.233-.89 2.22 2.22 0 01-1.038-.63 2.23 2.23 0 01-.518-1.1 2.22 2.22 0 00-.764-1.41 2.216 2.216 0 00-1.575-.44 2.22 2.22 0 01-1.188-.335A2.22 2.22 0 0111 .998a2.22 2.22 0 00-.852 1.413 2.22 2.22 0 01-1.188.335 2.216 2.216 0 00-1.575.44 2.22 2.22 0 00-.764 1.41 2.23 2.23 0 01-.518 1.1 2.22 2.22 0 01-1.038.63 2.22 2.22 0 00-1.233.89 2.22 2.22 0 00-.355 1.594 2.23 2.23 0 01-.227 1.21 2.222 2.222 0 01-.84.89 2.21 2.21 0 00-.876.858c-.218.376-.332.802-.33 1.232.002.43.118.855.338 1.23.22.375.537.683.918.896a2.22 2.22 0 01.84.89c.154.398.192.83.107 1.247a2.22 2.22 0 00.394 1.594c.338.46.829.782 1.38.908a2.22 2.22 0 011.038.63c.276.307.462.686.536 1.095a2.22 2.22 0 00.764 1.41 2.216 2.216 0 001.575.44 2.22 2.22 0 011.188.335A2.22 2.22 0 0011 21.002a2.22 2.22 0 00.852-1.413 2.22 2.22 0 011.188-.335c.558.058 1.117-.1 1.575-.44a2.22 2.22 0 00.764-1.41 2.23 2.23 0 01.536-1.095 2.22 2.22 0 011.038-.63 2.22 2.22 0 001.38-.908 2.22 2.22 0 00.394-1.594 2.23 2.23 0 01.107-1.247 2.222 2.222 0 01.84-.89c.38-.213.698-.52.918-.896.22-.375.336-.8.338-1.23z"
+        fill="#1D9BF0"
+      />
+      {/* White checkmark */}
+      <path
+        d="M9.64 14.98l-3.19-3.19a.75.75 0 011.06-1.06l2.13 2.13 4.82-4.82a.75.75 0 011.06 1.06l-5.88 5.88z"
+        fill="#fff"
+      />
     </svg>
   )
 }

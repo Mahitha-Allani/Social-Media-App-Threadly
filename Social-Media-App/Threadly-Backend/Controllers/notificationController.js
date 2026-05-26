@@ -4,7 +4,7 @@ import Notification from "../Models/notificationModel.js";
 export const getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ receiverId: req.userId })
-      .populate("senderId", "username name profileImage")
+      .populate("senderId", "username name profileImage verified")
       .populate("postId", "content") // optional if it's a post related notification
       .sort({ createdAt: -1 })
       .limit(50); // Limit to last 50 for performance

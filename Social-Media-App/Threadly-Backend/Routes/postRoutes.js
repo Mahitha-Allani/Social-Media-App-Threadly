@@ -46,7 +46,7 @@ postRouter.post("/", authMiddleware, upload.array("images",4), async (req,res)=>
 
     await post.save();
 
-    await post.populate("author","username email name profileImage");
+    await post.populate("author","username email name profileImage verified");
 
     res.status(201).json(post);
 
@@ -72,8 +72,8 @@ postRouter.get('/feed', authMiddleware, async (req, res) => {
       ]
     })
       .populate('author', 'username name profileImage verified')
-      .populate('comments.user', 'username name profileImage')
-      .populate('comments.replies.user', 'username name profileImage')
+      .populate('comments.user', 'username name profileImage verified')
+      .populate('comments.replies.user', 'username name profileImage verified')
       .sort({ createdAt: -1 })
       .limit(50);
 
@@ -92,8 +92,8 @@ postRouter.get('/all', async (req, res) => {
 
     const posts = await Post.find()
       .populate('author', 'username name profileImage verified')
-      .populate('comments.user', 'username name profileImage')
-      .populate('comments.replies.user', 'username name profileImage')
+      .populate('comments.user', 'username name profileImage verified')
+      .populate('comments.replies.user', 'username name profileImage verified')
       .sort({ createdAt: -1 })
       .limit(50);
 
@@ -112,8 +112,8 @@ postRouter.get('/user/:userId', async (req, res) => {
     
     const posts = await Post.find({ author: userId })
       .populate('author', 'username name profileImage verified')
-      .populate('comments.user', 'username name profileImage')
-      .populate('comments.replies.user', 'username name profileImage')
+      .populate('comments.user', 'username name profileImage verified')
+      .populate('comments.replies.user', 'username name profileImage verified')
       .sort({ createdAt: -1 });
 
     res.json(posts);
@@ -130,8 +130,8 @@ postRouter.get('/:postId', async (req, res) => {
 
     const post = await Post.findById(req.params.postId)
       .populate('author', 'username name profileImage verified')
-      .populate('comments.user', 'username name profileImage')
-      .populate('comments.replies.user', 'username name profileImage');
+      .populate('comments.user', 'username name profileImage verified')
+      .populate('comments.replies.user', 'username name profileImage verified');
 
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
@@ -175,7 +175,7 @@ postRouter.post('/:postId/like', authMiddleware, async (req, res) => {
         
         try {
           const populatedNotification = await Notification.findById(notification._id)
-            .populate("senderId", "username name profileImage")
+            .populate("senderId", "username name profileImage verified")
             .populate("postId", "content");
           sendNotification(post.author, populatedNotification);
         } catch (err) {
@@ -288,7 +288,7 @@ postRouter.post('/:postId/comment', authMiddleware, async (req, res) => {
 
       try {
         const populatedNotification = await Notification.findById(notification._id)
-          .populate("senderId", "username name profileImage")
+          .populate("senderId", "username name profileImage verified")
           .populate("postId", "content");
         sendNotification(post.author, populatedNotification);
       } catch (err) {
@@ -297,8 +297,8 @@ postRouter.post('/:postId/comment', authMiddleware, async (req, res) => {
     }
 
     await post.populate('author', 'username name profileImage verified');
-    await post.populate('comments.user', 'username name profileImage');
-    await post.populate('comments.replies.user', 'username name profileImage');
+    await post.populate('comments.user', 'username name profileImage verified');
+    await post.populate('comments.replies.user', 'username name profileImage verified');
 
     res.json(post);
 
@@ -344,7 +344,7 @@ postRouter.post('/:postId/comment/:commentId/reply', authMiddleware, async (req,
 
       try {
         const populatedNotification = await Notification.findById(notification._id)
-          .populate("senderId", "username name profileImage")
+          .populate("senderId", "username name profileImage verified")
           .populate("postId", "content");
         sendNotification(comment.user, populatedNotification);
       } catch (err) {
@@ -353,8 +353,8 @@ postRouter.post('/:postId/comment/:commentId/reply', authMiddleware, async (req,
     }
 
     await post.populate('author', 'username name profileImage verified');
-    await post.populate('comments.user', 'username name profileImage');
-    await post.populate('comments.replies.user', 'username name profileImage');
+    await post.populate('comments.user', 'username name profileImage verified');
+    await post.populate('comments.replies.user', 'username name profileImage verified');
 
     res.json(post);
 

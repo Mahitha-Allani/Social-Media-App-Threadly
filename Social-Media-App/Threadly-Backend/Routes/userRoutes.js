@@ -37,8 +37,8 @@ userRouter.get('/me', authMiddleware, async (req, res) => {
 
     const user = await User.findById(req.userId)
       .select('-password')
-      .populate('followers', 'username name profileImage')
-      .populate('following', 'username name profileImage');
+      .populate('followers', 'username name profileImage verified')
+      .populate('following', 'username name profileImage verified');
 
     res.json(user);
 
@@ -94,15 +94,15 @@ userRouter.get('/:username', async (req, res) => {
 
     const user = await User.findOne({ username: req.params.username })
       .select('-password')
-      .populate('followers', 'username name profileImage')
-      .populate('following', 'username name profileImage');
+      .populate('followers', 'username name profileImage verified')
+      .populate('following', 'username name profileImage verified');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     const posts = await Post.find({ author: user._id })
-      .populate('author', 'username name profileImage')
+      .populate('author', 'username name profileImage verified')
       .sort({ createdAt: -1 });
 
     res.json({ user, posts });
@@ -117,12 +117,13 @@ userRouter.get('/:username', async (req, res) => {
 userRouter.put('/profile', authMiddleware, async (req, res) => {
   try {
 
-    const { name, bio } = req.body;
+    const { name, bio, verified } = req.body;
 
     const updates = {};
 
     if (name) updates.name = name;
     if (bio !== undefined) updates.bio = bio;
+    if (verified !== undefined) updates.verified = verified;
 
     const user = await User.findByIdAndUpdate(
       req.userId,
@@ -199,7 +200,7 @@ userRouter.post('/:userId/follow', authMiddleware, async (req, res) => {
 
     try {
       const populatedNotification = await Notification.findById(notification._id)
-        .populate("senderId", "username name profileImage");
+        .populate("senderId", "username name profileImage verified");
       sendNotification(userIdToFollow, populatedNotification);
     } catch (err) {
       console.error("Failed to emit real-time follow notification:", err);
@@ -249,7 +250,7 @@ userRouter.get('/:userId/followers', async (req, res) => {
   try {
 
     const user = await User.findById(req.params.userId)
-      .populate('followers', 'username name profileImage bio');
+      .populate('followers', 'username name profileImage bio verified');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -268,7 +269,7 @@ userRouter.get('/:userId/following', async (req, res) => {
   try {
 
     const user = await User.findById(req.params.userId)
-      .populate('following', 'username name profileImage bio');
+      .populate('following', 'username name profileImage bio verified');
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
